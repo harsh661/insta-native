@@ -2,32 +2,46 @@ import { Image, StyleSheet, Text, TextInput, View } from "react-native"
 import React, { useState } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
 import Button from "../components/Button"
-import { signInWithEmailAndPassword } from "firebase/auth"
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth"
 import { FIREBASE_AUTH } from "../firebase"
 
-const LoginScreen = ({ navigation }) => {
+const RegisterScreen = ({ navigation }) => {
+  const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [error, setError] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const handleClick = () => {
-    if (email.length && password.length) {
-      signInWithEmailAndPassword(FIREBASE_AUTH, email, password)
-        .then(() => {
-          navigation.navigate("Home")
+    setLoading(true)
+    if (name.length && email.length && password.length) {
+      createUserWithEmailAndPassword(FIREBASE_AUTH, email, password)
+        .then((userCredentials) => {
+          const user = userCredentials.user
+          updateProfile(user, {
+            displayName: name,
+          }).then(() => {
+            navigation.navigate("Home")
+          })
         })
-        .catch(() => {
-          setError(true)
+        .catch((error) => {
+          console.log(error)
+        })
+        .finally(() => {
+            setLoading(false)
         })
     }
   }
-
-  const errorState = error && styles.textError
 
   return (
     <SafeAreaView style={styles.container}>
       <Image style={styles.image} source={require("../assets/logo.png")} />
 
+      <TextInput
+        style={styles.input}
+        placeholder="Name"
+        value={name}
+        onChangeText={(text) => setName(text)}
+      />
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -36,26 +50,26 @@ const LoginScreen = ({ navigation }) => {
       />
       <TextInput
         secureTextEntry
-        style={[styles.input, errorState]}
+        style={styles.input}
         placeholder="Password"
         value={password}
         onChangeText={(text) => setPassword(text)}
       />
-      <Button onClick={handleClick} label={"Login"} />
+      <Button onClick={handleClick} label={"Register"} />
 
       <View style={styles.textWrapper}>
         <Text style={styles.text}>Log in with google</Text>
       </View>
       <View style={styles.textWrapper}>
         <Text style={{ color: "#00000050" }}>
-          Don't have an account?{" "}
+          Already have an account?{" "}
           <Text
             onPress={() => {
-              navigation.navigate("Register")
+              navigation.navigate("Login")
             }}
             style={styles.text}
           >
-            Sign up.
+            Log in.
           </Text>
         </Text>
       </View>
@@ -63,7 +77,7 @@ const LoginScreen = ({ navigation }) => {
   )
 }
 
-export default LoginScreen
+export default RegisterScreen
 
 const styles = StyleSheet.create({
   container: {
@@ -98,7 +112,4 @@ const styles = StyleSheet.create({
   text: {
     color: "#3797EF",
   },
-  textError: {
-    borderColor: '#f00'
-  }
 })
