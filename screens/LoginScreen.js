@@ -4,8 +4,12 @@ import { SafeAreaView } from "react-native-safe-area-context"
 import Button from "../components/Button"
 import { signInWithEmailAndPassword } from "firebase/auth"
 import { FIREBASE_AUTH } from "../firebase"
+import { useNavigation } from "@react-navigation/native"
+import useGetUser from "../contexts/UserContext"
 
-const LoginScreen = ({ navigation }) => {
+const LoginScreen = () => {
+  const navigation = useNavigation()
+  const { setUser } = useGetUser()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState(false)
@@ -13,7 +17,8 @@ const LoginScreen = ({ navigation }) => {
   const handleClick = () => {
     if (email.length && password.length) {
       signInWithEmailAndPassword(FIREBASE_AUTH, email, password)
-        .then(() => {
+        .then((userCredentials) => {
+          setUser(userCredentials.user)
           navigation.navigate("Home")
         })
         .catch(() => {
