@@ -9,17 +9,18 @@ export const UserContextProvider = ({ children }) => {
   const currentUser = FIREBASE_AUTH.currentUser
 
   useEffect(() => {
-    (async () => {
+    const fetchUser = async () => {
       const docRef = doc(db, "users", currentUser?.uid)
       const docSnap = await getDoc(docRef)
-    
+
       if (docSnap.exists()) {
         setUser(docSnap.data())
       } else {
-        console.log("Unauthorized");
+        console.log("Unauthorized")
       }
-    })()
-  }, [currentUser])
+    }
+    fetchUser()
+  }, [])
 
   return (
     <UserContext.Provider value={{ user, setUser }}>
@@ -29,7 +30,5 @@ export const UserContextProvider = ({ children }) => {
 }
 
 export default function useGetUser() {
-  return (
-    useContext(UserContext)
-  )
+  return useContext(UserContext)
 }

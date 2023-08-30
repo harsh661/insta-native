@@ -10,23 +10,64 @@ import { SafeAreaView } from "react-native-safe-area-context"
 import Avatar from "../components/ui/Avatar"
 import useGetUser from "../contexts/UserContext"
 import { doc, updateDoc } from "firebase/firestore"
-import { db } from "../firebase"
+import { db, storage } from "../firebase"
+import "firebase/storage"
+import * as ImagePicker from "expo-image-picker"
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage"
 
 const EditProfile = ({ navigation }) => {
   const { user, setUser } = useGetUser()
   const [name, setName] = useState(user.displayName)
   const [bio, setBio] = useState(user.bio)
+  const [image, setImage] = useState(null)
 
-  if (!user) return
+  const handleSelect = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    })
 
-  const updateProfile = async() => {
+    if (!result.canceled) {
+      const blob = await new Promise((res, rej) => {
+        const xhr = new XMLHttpRequest()
+        xhr.onload = () => {
+          res(xhr.response)
+        }
+        xhr.onerror = () => {
+          rej(new TypeError("Request Failed"))
+        }
+        xhr.responseType = "blob"
+        xhr.open("GET", result.assets[0].uri, true)
+        xhr.send(null)
+      })
+
+      const storageRef = ref(storage, `images/${blob._data.name}`)
+
+      uploadBytes(storageRef, blob).then(async (snapshot) => {
+        const downloadURL = await getDownloadURL(snapshot.ref)
+        setImage(downloadURL)
+      })
+    }
+  }
+
+  const updateProfile = async () => {
     await updateDoc(doc(db, "users", user.uid), {
       displayName: name,
-      bio: bio
+      bio: bio,
+      photoURL: image,
     })
-    setUser(prev => ({...prev, displayName: name, bio: bio}))
-    navigation.navigate('Profile')
+    setUser((prev) => ({
+      ...prev,
+      displayName: name,
+      bio: bio,
+      photoURL: image,
+    }))
+    navigation.navigate("Profile")
   }
+
+  if (!user) return
 
   return (
     <SafeAreaView style={{ paddingHorizontal: 15 }}>
@@ -40,8 +81,10 @@ const EditProfile = ({ navigation }) => {
         </TouchableOpacity>
       </View>
       <View style={styles.profileImage}>
-        <Avatar url={user?.photoURL} size={86} />
-        <Text style={styles.boldText}>Edit Profile Photo</Text>
+        <Avatar url={!image ? user?.photoURL : image} size={86} />
+        <Text onPress={handleSelect} style={styles.boldText}>
+          Edit Profile Photo
+        </Text>
       </View>
 
       <View style={styles.input}>

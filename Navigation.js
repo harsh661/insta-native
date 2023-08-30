@@ -7,6 +7,7 @@ import RegisterScreen from "./screens/RegisterScreen"
 import ProfileScreen from "./screens/ProfileScreen"
 import EditProfile from "./screens/EditProfile"
 import useGetUser from "./contexts/UserContext.jsx"
+import CreatePost from "./screens/CreatePost"
 
 const Stack = createNativeStackNavigator()
 
@@ -18,6 +19,7 @@ const Navigation = () => {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="EditProfile" component={EditProfile} />
+        <Stack.Screen name="Create" component={CreatePost} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
       </Stack.Navigator>

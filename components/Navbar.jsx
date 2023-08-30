@@ -11,13 +11,15 @@ const Navbar = () => {
   return (
     <View style={styles.navWrapper}>
       <TouchableOpacity onPress={() => navigation.navigate("Home")}>
-        <Home style={styles.icon}/>
+        <Home style={styles.icon} />
       </TouchableOpacity>
       <Search style={styles.icon} />
-      <PlusSquare style={styles.icon} />
+      <TouchableOpacity onPress={() => navigation.navigate("Create")}>
+        <PlusSquare style={styles.icon} />
+      </TouchableOpacity>
       <Heart style={styles.icon} />
       <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
-        <Avatar url={user?.displayImage} size={24} />
+        <Avatar url={user?.photoURL} size={24} />
       </TouchableOpacity>
     </View>
   )

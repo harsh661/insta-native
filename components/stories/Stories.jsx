@@ -1,18 +1,18 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native"
-import React, { useContext } from "react"
-import UserStories from "./UserStory"
+import React from "react"
 import { users } from "../../constants"
 import UserStory from "./UserStory"
-import { UserContext } from "../../contexts/UserContext"
+import useGetUser from "../../contexts/UserContext"
 
 const Stories = () => {
-  const currentUser = useContext(UserContext)
+  const { user } = useGetUser()
+  console.log(user)
   return (
     <View style={styles.storiesWrapper}>
       <ScrollView horizontal>
         <UserStory
           name={"Your Story"}
-          image={currentUser.photoURL}
+          photoURL={user?.photoURL}
         />
         {users.map((user, i) => (
           <UserStory key={user.name + i} {...user} story/>

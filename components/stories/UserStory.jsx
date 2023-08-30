@@ -3,9 +3,11 @@ import React from "react"
 
 const UserStory = ({ name, photoURL, story }) => {
   const isActive = story && styles.withBorder
+  const defaultImage = require('../../assets/user.png')
+
   return (
     <View style={styles.storyWrapper}>
-      <Image src={photoURL} style={[styles.image, isActive]} />
+      <Image source={photoURL ? {uri: photoURL} : defaultImage} style={[styles.image, isActive]} />
       <Text numberOfLines={1} ellipsizeMode="tail" style={styles.text}>{name}</Text>
     </View>
   )
