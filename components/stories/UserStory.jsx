@@ -1,11 +1,11 @@
 import { Image, StyleSheet, Text, View } from "react-native"
 import React from "react"
 
-const UserStory = ({ name, image, story }) => {
+const UserStory = ({ name, photoURL, story }) => {
   const isActive = story && styles.withBorder
   return (
     <View style={styles.storyWrapper}>
-      <Image src={image} style={[styles.image, isActive]} />
+      <Image src={photoURL} style={[styles.image, isActive]} />
       <Text numberOfLines={1} ellipsizeMode="tail" style={styles.text}>{name}</Text>
     </View>
   )

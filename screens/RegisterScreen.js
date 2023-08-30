@@ -3,8 +3,10 @@ import React, { useState } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
 import Button from "../components/Button"
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth"
-import { FIREBASE_AUTH } from "../firebase"
+import { FIREBASE_AUTH, db } from "../firebase"
 import { useNavigation } from "@react-navigation/native"
+import { doc, setDoc } from "firebase/firestore"
+import useGetUser from "../contexts/UserContext.jsx"
 
 const RegisterScreen = () => {
   const navigation = useNavigation()
@@ -13,24 +15,39 @@ const RegisterScreen = () => {
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
 
-  const handleClick = () => {
+  const handleClick = async () => {
     setLoading(true)
+
     if (name.length && email.length && password.length) {
-      createUserWithEmailAndPassword(FIREBASE_AUTH, email, password)
-        .then((userCredentials) => {
-          const user = userCredentials.user
+      try {
+        const userCredentials = await createUserWithEmailAndPassword(
+          FIREBASE_AUTH,
+          email,
+          password
+        )
+        const user = userCredentials.user
+
+        await Promise.all([
           updateProfile(user, {
             displayName: name,
-          }).then(() => {
-            navigation.navigate("Home")
-          })
-        })
-        .catch((error) => {
-          console.log(error)
-        })
-        .finally(() => {
-            setLoading(false)
-        })
+          }),
+          setDoc(doc(db, "users", user.uid), {
+            uid: user.uid,
+            displayName: name,
+            email: user.email,
+            photoURL: user.photoURL,
+            bio: "",
+            followers: 0,
+            followings: 0,
+          }),
+        ])
+
+        navigation.navigate("Home")
+      } catch (error) {
+        console.log(error)
+      } finally {
+        setLoading(false)
+      }
     }
   }
 

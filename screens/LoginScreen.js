@@ -17,8 +17,7 @@ const LoginScreen = () => {
   const handleClick = () => {
     if (email.length && password.length) {
       signInWithEmailAndPassword(FIREBASE_AUTH, email, password)
-        .then((userCredentials) => {
-          setUser(userCredentials.user)
+        .then(() => {
           navigation.navigate("Home")
         })
         .catch(() => {

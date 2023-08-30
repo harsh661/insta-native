@@ -1,18 +1,31 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
-import React from "react"
-import { FIREBASE_AUTH } from "../firebase"
+import React, { useEffect } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { Menu } from "react-native-feather"
 import Avatar from "../components/ui/Avatar"
 import Navbar from "../components/Navbar"
+import useGetUser from "../contexts/UserContext"
+import { signOut } from "firebase/auth"
+import { FIREBASE_AUTH } from "../firebase"
+import { useNavigation } from "@react-navigation/native"
 
-const ProfileScreen = ({ navigation }) => {
-  const user = FIREBASE_AUTH.currentUser
+const ProfileScreen = () => {
+  const navigation = useNavigation()
+  const {user} = useGetUser()
 
-  if (!user) return null
+  const logOut = () => {
+    signOut(FIREBASE_AUTH).then(() => {
+      console.log('sign out successful')
+      navigation.navigate('Login', {screen: 'Login'})
+    }).catch((e) => {
+      console.log(e)
+    })
+  }
+
+  if(!user) return
 
   return (
-    <SafeAreaView style={{height: 100+'%'}}>
+    <SafeAreaView style={{ height: 100 + "%" }}>
       <View style={styles.profileHeader}>
         <Text style={{ fontSize: 16, fontWeight: "bold" }}>{user.email}</Text>
         <Menu
@@ -20,7 +33,14 @@ const ProfileScreen = ({ navigation }) => {
         />
       </View>
       <View style={styles.about}>
-        <View style={{display: "flex", flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
           <Avatar url={user.photoURL} size={70} />
 
           <View style={styles.counts}>
@@ -37,10 +57,20 @@ const ProfileScreen = ({ navigation }) => {
           </View>
         </View>
         <View>
-            <Text style={{fontWeight: 'bold'}}>{user.displayName}</Text>
+          <Text style={{ fontWeight: "bold" }}>{user.displayName}</Text>
         </View>
-        <TouchableOpacity style={styles.editButton} onPress={()=>navigation.navigate('EditProfile')}>
-            <Text style={{fontWeight: 'bold', fontSize: 16}}>Edit Profile</Text>
+        <TouchableOpacity
+          style={styles.editButton}
+          onPress={() => navigation.navigate("EditProfile")}
+        >
+          <Text style={{ fontWeight: "bold", fontSize: 16 }}>Edit Profile</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.editButton}
+          onPress={()=>logOut()}
+        >
+          <Text style={{ fontWeight: "bold", fontSize: 16 }}>Logout</Text>
         </TouchableOpacity>
       </View>
 
@@ -74,10 +104,10 @@ const styles = StyleSheet.create({
   },
   editButton: {
     padding: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderWidth: 0.5,
     borderRadius: 5,
-    borderColor: '#00000050'
-  }
+    borderColor: "#00000050",
+  },
 })

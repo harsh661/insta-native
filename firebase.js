@@ -10,18 +10,18 @@ import { ReactNativeAsyncStorage } from "@react-native-async-storage/async-stora
 const firebaseConfig = {
   apiKey: "AIzaSyCmb_KIxLaYOyR_WZWCF6iz_SbX3zYYQHM",
 
-  authDomain: process.env.REACT_FIREBASE_AUTH_DOMAIN,
+  authDomain: "insta-clone-af710.firebaseapp.com",
 
-  projectId: process.env.REACT_FIREBASE_PROJECT_ID,
+  projectId: "insta-clone-af710",
 
-  storageBucket: process.env.REACT_FIREBASE_STORAGE_BUCKET,
+  storageBucket: "insta-clone-af710.appspot.com",
 
-  messagingSenderId: process.env.REACT_FIREBASE_MESSAGING_ID,
+  messagingSenderId: "1021656451675",
 
-  appId: process.env.REACT_FIREBASE_APP_ID,
+  appId: "1:1021656451675:web:06dd6093a67a65d3888d7e"
 }
 
-let FIREBASE_APP, FIREBASE_AUTH
+let FIREBASE_AUTH, FIREBASE_APP
 
 if (!getApps().length) {
   try {
@@ -37,6 +37,6 @@ if (!getApps().length) {
   FIREBASE_AUTH = getAuth(FIREBASE_APP)
 }
 
-const FIREBASE_STORE = getFirestore(FIREBASE_APP)
+const db = getFirestore(FIREBASE_APP)
 
-export {FIREBASE_APP, FIREBASE_AUTH, FIREBASE_STORE}
+export {FIREBASE_APP, FIREBASE_AUTH, db}

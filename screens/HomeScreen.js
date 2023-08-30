@@ -6,19 +6,16 @@ import Stories from "../components/stories/Stories"
 import Post from "../components/posts/Post"
 import Navbar from "../components/Navbar"
 import { FIREBASE_AUTH } from "../firebase"
-import { UserContext } from "../contexts/UserContext"
 import { useNavigation } from "@react-navigation/native"
 
 const HomeScreen = () => {
   const navigation = useNavigation()
   const currentUser = FIREBASE_AUTH.currentUser
-  const { setUser } = useContext(UserContext)
 
   useEffect(() => {
     if(!currentUser) {
-      navigation.navigate('Login')
+      navigation.navigate('Login', {screen: 'Login'})
     }
-    setUser(currentUser)
   }, [currentUser])
 
   return (
