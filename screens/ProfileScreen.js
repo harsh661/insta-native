@@ -22,7 +22,7 @@ const ProfileScreen = () => {
     })
   }
 
-  if(!user) return
+  if(!user) return null
 
   return (
     <SafeAreaView style={{ height: 100 + "%" }}>
@@ -58,6 +58,9 @@ const ProfileScreen = () => {
         </View>
         <View>
           <Text style={{ fontWeight: "bold" }}>{user.displayName}</Text>
+        </View>
+        <View>
+          <Text>{user.bio}</Text>
         </View>
         <TouchableOpacity
           style={styles.editButton}
