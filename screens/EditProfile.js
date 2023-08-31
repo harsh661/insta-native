@@ -10,10 +10,9 @@ import { SafeAreaView } from "react-native-safe-area-context"
 import Avatar from "../components/ui/Avatar"
 import useGetUser from "../contexts/UserContext"
 import { doc, updateDoc } from "firebase/firestore"
-import { db, storage } from "../firebase"
+import { db } from "../firebase"
 import "firebase/storage"
 import * as ImagePicker from "expo-image-picker"
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage"
 import getDownloadLink from "../libs/getDownloadLink"
 
 const EditProfile = ({ navigation }) => {
