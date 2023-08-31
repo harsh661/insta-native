@@ -1,26 +1,9 @@
-import { createContext, useContext, useEffect, useState } from "react"
-import { doc, getDoc } from "firebase/firestore"
-import { FIREBASE_AUTH, db } from "../firebase"
+import { createContext, useContext, useState } from "react"
 
-export const UserContext = createContext(null)
+export const UserContext = createContext({})
 
 export const UserContextProvider = ({ children }) => {
-  const [user, setUser] = useState(null)
-  const currentUser = FIREBASE_AUTH.currentUser
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const docRef = doc(db, "users", currentUser?.uid)
-      const docSnap = await getDoc(docRef)
-
-      if (docSnap.exists()) {
-        setUser(docSnap.data())
-      } else {
-        console.log("Unauthorized")
-      }
-    }
-    fetchUser()
-  }, [currentUser])
+  const [user, setUser] = useState({})
 
   return (
     <UserContext.Provider value={{ user, setUser }}>
