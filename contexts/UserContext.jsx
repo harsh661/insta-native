@@ -20,7 +20,7 @@ export const UserContextProvider = ({ children }) => {
       }
     }
     fetchUser()
-  }, [])
+  }, [currentUser])
 
   return (
     <UserContext.Provider value={{ user, setUser }}>
