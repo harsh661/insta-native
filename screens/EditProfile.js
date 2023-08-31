@@ -14,6 +14,7 @@ import { db, storage } from "../firebase"
 import "firebase/storage"
 import * as ImagePicker from "expo-image-picker"
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage"
+import getDownloadLink from "../libs/getDownloadLink"
 
 const EditProfile = ({ navigation }) => {
   const { user, setUser } = useGetUser()
@@ -30,25 +31,12 @@ const EditProfile = ({ navigation }) => {
     })
 
     if (!result.canceled) {
-      const blob = await new Promise((res, rej) => {
-        const xhr = new XMLHttpRequest()
-        xhr.onload = () => {
-          res(xhr.response)
-        }
-        xhr.onerror = () => {
-          rej(new TypeError("Request Failed"))
-        }
-        xhr.responseType = "blob"
-        xhr.open("GET", result.assets[0].uri, true)
-        xhr.send(null)
-      })
-
-      const storageRef = ref(storage, `images/${blob._data.name}`)
-
-      uploadBytes(storageRef, blob).then(async (snapshot) => {
-        const downloadURL = await getDownloadURL(snapshot.ref)
+      try {
+        const downloadURL = await getDownloadLink(result.assets[0].uri, 'images')
         setImage(downloadURL)
-      })
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 
