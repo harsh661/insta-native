@@ -6,7 +6,6 @@ import useGetUser from "../../contexts/UserContext"
 
 const Stories = () => {
   const { user } = useGetUser()
-  console.log(user)
   return (
     <View style={styles.storiesWrapper}>
       <ScrollView horizontal>

@@ -1,44 +1,26 @@
-import { getApp, getApps, initializeApp } from "firebase/app"
-import {
-  initializeAuth,
-  getReactNativePersistence,
-  getAuth,
-} from "firebase/auth"
+import { initializeApp } from "firebase/app"
+import { getAuth } from "firebase/auth"
 import { getFirestore } from "firebase/firestore"
-import { ReactNativeAsyncStorage } from "@react-native-async-storage/async-storage"
 import { getStorage } from "firebase/storage"
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCmb_KIxLaYOyR_WZWCF6iz_SbX3zYYQHM",
+  apiKey: process.env.EXPO_PUBLIC_API_KEY,
 
-  authDomain: "insta-clone-af710.firebaseapp.com",
+  authDomain: process.env.EXPO_PUBLIC_AUTH_DOMAIN,
 
-  projectId: "insta-clone-af710",
+  projectId: process.env.EXPO_PUBLIC_PROJECT_ID,
 
-  storageBucket: "insta-clone-af710.appspot.com",
+  storageBucket: process.env.EXPO_PUBLIC_STORAGE_BUCKET,
 
-  messagingSenderId: "1021656451675",
+  messagingSenderId: process.env.EXPO_PUBLIC_MESSAGING_ID,
 
-  appId: "1:1021656451675:web:06dd6093a67a65d3888d7e"
+  appId: process.env.EXPO_PUBLIC_APP_ID,
 }
 
-let FIREBASE_AUTH, FIREBASE_APP
-
-if (!getApps().length) {
-  try {
-    FIREBASE_APP = initializeApp(firebaseConfig)
-    FIREBASE_AUTH = initializeAuth(FIREBASE_APP, {
-      persistence: getReactNativePersistence(ReactNativeAsyncStorage),
-    })
-  } catch (error) {
-    console.log("Error initializing FIREBASE_APP: " + error)
-  }
-} else {
-  FIREBASE_APP = getApp()
-  FIREBASE_AUTH = getAuth(FIREBASE_APP)
-}
+const FIREBASE_APP = initializeApp(firebaseConfig)
+const FIREBASE_AUTH = getAuth(FIREBASE_APP)
 
 const db = getFirestore(FIREBASE_APP)
 const storage = getStorage(FIREBASE_APP)
 
-export {FIREBASE_APP, FIREBASE_AUTH, db, storage}
+export { FIREBASE_APP, FIREBASE_AUTH, db, storage }

@@ -2,12 +2,13 @@ import { Image, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import PostHeader from './PostHeader'
 import { Heart, MessageCircle, Send, Bookmark } from 'react-native-feather'
+import TimeAgo from 'react-native-timeago';
 
-const Post = () => {
+const Post = ({ author, caption, createdAt, image, likes, comments }) => {
   return (
     <View style={styles.postBody}>
-      <PostHeader name={'Josh Morgan'}/>
-      <Image src='https://cdn.pixabay.com/photo/2023/08/06/18/55/building-8173603_960_720.jpg' style={styles.postImage} />
+      <PostHeader url={author.photoURL} name={author.displayName}/>
+      <Image source={{uri: image}} style={styles.postImage} />
       <View style={styles.data}>
         <View style={styles.likes}>
             <Heart style={styles.icon}/>
@@ -17,8 +18,9 @@ const Post = () => {
         <Bookmark style={styles.icon} />
       </View>
       <View style={styles.caption}>
-        <Text style={styles.captionText}>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nesciunt, animi?</Text>
-      <Text style={styles.time}>{'10 hours ago'}</Text>
+        <Text style={[styles.captionText, {marginBottom: 10}]}>{likes} likes</Text>
+        <Text style={styles.captionText}>{caption}</Text>
+        <TimeAgo style={styles.time} time={createdAt.toDate()}/>
       </View>
     </View>
   )
@@ -56,7 +58,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15
     },
     captionText: {
-        fontSize: 12,
+        fontSize: 14,
         fontWeight: '600'
     },
     time: {

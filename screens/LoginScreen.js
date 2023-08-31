@@ -1,13 +1,14 @@
 import { Image, StyleSheet, Text, TextInput, View } from "react-native"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
 import Button from "../components/Button"
 import { signInWithEmailAndPassword } from "firebase/auth"
 import { FIREBASE_AUTH } from "../firebase"
-import { useNavigation } from "@react-navigation/native"
+import { useIsFocused, useNavigation } from "@react-navigation/native"
 import useGetUser from "../contexts/UserContext"
 
 const LoginScreen = () => {
+  const isFocused = useIsFocused()
   const navigation = useNavigation()
   const { setUser } = useGetUser()
   const [email, setEmail] = useState("")
@@ -25,6 +26,12 @@ const LoginScreen = () => {
         })
     }
   }
+
+  useEffect(() => {
+    if(isFocused) {
+      setUser({})
+    }
+  }, [isFocused])
 
   const errorState = error && styles.textError
 

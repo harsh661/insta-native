@@ -1,28 +1,57 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
-import React, { useEffect } from "react"
+import {
+  FlatList,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native"
+import React, { useEffect, useState } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { Menu } from "react-native-feather"
 import Avatar from "../components/ui/Avatar"
 import Navbar from "../components/Navbar"
 import useGetUser from "../contexts/UserContext"
 import { signOut } from "firebase/auth"
-import { FIREBASE_AUTH } from "../firebase"
+import { FIREBASE_AUTH, db } from "../firebase"
 import { useNavigation } from "@react-navigation/native"
+import { collection, doc, getDocs, query, where } from "firebase/firestore"
 
 const ProfileScreen = () => {
   const navigation = useNavigation()
-  const {user} = useGetUser()
+  const { user } = useGetUser()
+
+  const [posts, setPosts] = useState([])
 
   const logOut = () => {
-    signOut(FIREBASE_AUTH).then(() => {
-      console.log('sign out successful')
-      navigation.navigate('Login', {screen: 'Login'})
-    }).catch((e) => {
-      console.log(e)
-    })
+    signOut(FIREBASE_AUTH)
+      .then(() => {
+        console.log("sign out successful")
+        navigation.navigate("Login", { screen: "Login" })
+      })
+      .catch((e) => {
+        console.log(e)
+      })
   }
 
-  if(!user) return null
+  const fetchPosts = async () => {
+    const q = query(collection(db, "posts"), where("authorId", "==", user.uid))
+
+    const querySnapshot = await getDocs(q)
+    const postList = []
+    querySnapshot.forEach((doc) => {
+      postList.push({ id: doc.id, ...doc.data(), author: user.uid })
+    })
+
+    setPosts(postList)
+  }
+
+  useEffect(() => {
+    fetchPosts()
+  }, [])
+
+  if (!user) return null
 
   return (
     <SafeAreaView style={{ height: 100 + "%" }}>
@@ -69,13 +98,28 @@ const ProfileScreen = () => {
           <Text style={{ fontWeight: "bold", fontSize: 16 }}>Edit Profile</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.editButton}
-          onPress={()=>logOut()}
-        >
+        <TouchableOpacity style={styles.editButton} onPress={() => logOut()}>
           <Text style={{ fontWeight: "bold", fontSize: 16 }}>Logout</Text>
         </TouchableOpacity>
       </View>
+
+      <FlatList
+        data={posts}
+        renderItem={({ item }) => (
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "column",
+              margin: 1,
+            }}
+          >
+            <Image style={styles.imageThumbnail} source={{ uri: item.image }} />
+          </View>
+        )}
+        //Setting the number of column
+        numColumns={3}
+        keyExtractor={(item, index) => index.toString()}
+      />
 
       <Navbar />
     </SafeAreaView>
@@ -112,5 +156,11 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderRadius: 5,
     borderColor: "#00000050",
+  },
+  imageThumbnail: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 'auto',
+    aspectRatio: 1/1
   },
 })

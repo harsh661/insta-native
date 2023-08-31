@@ -6,7 +6,7 @@ const PostHeader = ({url, name}) => {
   return (
     <View style={styles.wrapper}>
       <View style={styles.user}>
-        <Avatar url={'https://i.ibb.co/C2LZS7J/user2.png'}/>
+        <Avatar url={url}/>
         <Text style={styles.text}>{name}</Text>
       </View>
     </View>

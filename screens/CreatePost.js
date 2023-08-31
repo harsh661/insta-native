@@ -46,10 +46,12 @@ const CreatePost = () => {
     setLoading(true)
 
     const post = {
-      author: user,
+      authorId: user.uid,
       image: image,
       caption: caption,
-      createdAt: serverTimestamp()
+      createdAt: serverTimestamp(),
+      likes: 0,
+      commets: 0
     }
     await addDoc(collection(db, "posts"), post);
     setLoading(false)
